@@ -1,0 +1,9 @@
+{
+	"name": "ADF-Dash",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "d217092f-83b5-4fd9-82f7-f4f407b6a011",
+		"tenantId": "83715e14-3a1e-4dd9-9ec5-7c08f81f9658"
+	}
+}
