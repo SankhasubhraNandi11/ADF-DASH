@@ -125,8 +125,11 @@
 				"userProperties": [],
 				"typeProperties": {
 					"method": "PUT",
+					"headers": {
+						"x-ms-blob-type": "BlockBlob"
+					},
 					"url": {
-						"value": "@concat('https://demodashboard1.blob.core.windows.net/test/random.csv?sv=2024-11-04&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-06-16T16:46:27Z&st=2025-06-16T08:46:27Z&spr=https&sig=zACWkrmY56U9lHFOUT%2Fj25uJM1poS%2FyNtihAIQgzDGc%3D')",
+						"value": "@concat('https://demodashboard1.blob.core.windows.net/temp/random.csv.gz?sv=2024-11-04&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-06-16T16:46:27Z&st=2025-06-16T08:46:27Z&spr=https&sig=zACWkrmY56U9lHFOUT%2Fj25uJM1poS%2FyNtihAIQgzDGc%3D')",
 						"type": "Expression"
 					},
 					"body": {
@@ -147,7 +150,7 @@
 			},
 			"pSalesOrg": {
 				"type": "string",
-				"defaultValue": "US01"
+				"defaultValue": "FR01"
 			},
 			"pEnvironment": {
 				"type": "string",
