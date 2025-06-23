@@ -129,7 +129,7 @@
 						"x-ms-blob-type": "BlockBlob"
 					},
 					"url": {
-						"value": "@concat('https://demodashboard1.blob.core.windows.net/temp/',activity('RTR GUID EXTRACT').output.csvGuid,'.csv/?sv=2024-11-04&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-06-23T16:10:59Z&st=2025-06-23T08:10:59Z&spr=https&sig=YD8Ay7r0klM7XL4eWxa5xAqEZNTH3oP9LMV%2BU2RII4s%3D')",
+						"value": "@concat('https://demodashboard1.blob.core.windows.net/temp/',activity('RTR GUID EXTRACT').output.csvGuid,'.csv?sv=2024-11-04&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-06-23T16:10:59Z&st=2025-06-23T08:10:59Z&spr=https&sig=YD8Ay7r0klM7XL4eWxa5xAqEZNTH3oP9LMV%2BU2RII4s%3D')",
 						"type": "Expression"
 					},
 					"body": {
