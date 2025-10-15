@@ -43,7 +43,7 @@
 									}
 								},
 								"url": {
-									"value": "@concat('https://duracell-sales--',pipeline().parameters.pEnvironment,'.sandbox.my.salesforce.com/services/apexrest/TPMGetCSVGuid?salesorg=',pipeline().parameters.pSalesOrg,'&metaname=',pipeline().parameters.pMetaName,'&calendaryear=',pipeline().parameters.pCalendarYear)",
+									"value": "@concat('https://duracell-sales--',pipeline().parameters.pEnvironment,'.sandbox.my.salesforce.com/services/apexrest/TPMGetCSVGuid?salesorg=',item(),'&metaname=',pipeline().parameters.pMetaName,'&calendaryear=',pipeline().parameters.pCalendarYear)",
 									"type": "Expression"
 								},
 								"body": {
