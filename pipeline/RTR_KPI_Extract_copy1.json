@@ -15,6 +15,10 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.pSalesOrg",
+						"type": "Expression"
+					},
 					"isSequential": true,
 					"activities": [
 						{
