@@ -1,0 +1,146 @@
+{
+	"name": "RTR_KPI_Extract_New",
+	"properties": {
+		"activities": [
+			{
+				"name": "Extract GUID for each Salesorg",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Generate_Token",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.pSalesOrg",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "RTR GUID EXTRACT",
+							"description": "",
+							"type": "WebActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"method": "GET",
+								"headers": {
+									"Authorization": {
+										"value": "@concat('Bearer ',activity('Generate_Token').output.access_token)",
+										"type": "Expression"
+									}
+								},
+								"url": {
+									"value": "@concat('https://duracell-sales--',pipeline().parameters.pEnvironment,'.sandbox.my.salesforce.com/services/apexrest/TPMGetCSVGuid?salesorg=',item(),'&metaname=',pipeline().parameters.pMetaName,'&calendaryear=',pipeline().parameters.pCalendarYear)",
+									"type": "Expression"
+								},
+								"body": {
+									"value": "{}",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Append GUID",
+							"type": "AppendVariable",
+							"dependsOn": [
+								{
+									"activity": "RTR GUID EXTRACT",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "vAppendGUID",
+								"value": {
+									"value": "@concat(item(),':',activity('RTR GUID EXTRACT').output.csvGuid,'\\n')",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Generate_Token",
+				"description": "The oauth token is generated through this web activity call.",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.0:10:00",
+					"retry": 5,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"url": {
+						"value": "@concat('https://duracell-sales--bat.sandbox.my.salesforce.com/services/oauth2/token?grant_type=client_credentials&client_id=3MVG9ubHzknLRFWPHRJt5W5qxsyegZtLfbkNj.acRNbxoW.3EOkZle1flxD3azG_wa5t8iVkiefFyQjLzNDdY&client_secret=FBA7B3853D97ED9EA63CAC84D0636441D785614EDB64EDE9D89E1896011DDBBF')",
+						"type": "Expression"
+					},
+					"body": {
+						"value": "{}",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"pMetaName": {
+				"type": "string",
+				"defaultValue": "OffPlatformDailyRealDataInEx"
+			},
+			"pCalendarYear": {
+				"type": "string",
+				"defaultValue": "2025"
+			},
+			"pEnvironment": {
+				"type": "string",
+				"defaultValue": "bat"
+			},
+			"pMetadescription": {
+				"type": "string",
+				"defaultValue": "Daily_RTR"
+			},
+			"pSalesOrg": {
+				"type": "array",
+				"defaultValue": [
+					"BR01",
+					"US09",
+					"MX01",
+					"CL01",
+					"AU01",
+					"SG01",
+					"CN10"
+				]
+			}
+		},
+		"variables": {
+			"vGUID": {
+				"type": "String"
+			},
+			"vAppendGUID": {
+				"type": "Array"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-06-05T16:48:56Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
