@@ -1,0 +1,164 @@
+{
+	"name": "RTR_KPI_Extract_copy1",
+	"properties": {
+		"activities": [
+			{
+				"name": "Generate_Token",
+				"description": "The oauth token is generated through this web activity call.",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.0:10:00",
+					"retry": 5,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"url": {
+						"value": "@concat('https://duracell-sales--bat.sandbox.my.salesforce.com/services/oauth2/token?grant_type=client_credentials&client_id=3MVG9ubHzknLRFWPHRJt5W5qxsyegZtLfbkNj.acRNbxoW.3EOkZle1flxD3azG_wa5t8iVkiefFyQjLzNDdY&client_secret=FBA7B3853D97ED9EA63CAC84D0636441D785614EDB64EDE9D89E1896011DDBBF')",
+						"type": "Expression"
+					},
+					"body": {
+						"value": "{}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "RTR GUID EXTRACT",
+				"description": "",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Generate_Token",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"headers": {
+						"Authorization": {
+							"value": "@concat('Bearer ',activity('Generate_Token').output.access_token)",
+							"type": "Expression"
+						}
+					},
+					"url": {
+						"value": "@concat('https://duracell-sales--',pipeline().parameters.pEnvironment,'.sandbox.my.salesforce.com/services/apexrest/TPMGetCSVGuid?salesorg=',pipeline().parameters.pSalesOrg,'&metaname=',pipeline().parameters.pMetaName,'&calendaryear=',pipeline().parameters.pCalendarYear)",
+						"type": "Expression"
+					},
+					"body": {
+						"value": "{}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Extract from sales orgs",
+				"description": "",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "RTR GUID EXTRACT",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"headers": {
+						"Authorization": {
+							"value": "@concat('Bearer ',activity('Generate_Token').output.access_token)",
+							"type": "Expression"
+						}
+					},
+					"url": {
+						"value": "@concat('https://rcg-integration.industries.sfdc-yfeipo.svc.sfdcfc.net/api/v1/files/getCSV/',activity('RTR GUID EXTRACT').output.csvGuid,'?path=full')",
+						"type": "Expression"
+					},
+					"body": {
+						"value": "{}",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Copy to Blob",
+				"description": "",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Extract from sales orgs",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "PUT",
+					"headers": {
+						"x-ms-blob-type": "BlockBlob"
+					},
+					"url": {
+						"value": "@concat('https://demodashboard1.blob.core.windows.net/temp/',activity('RTR GUID EXTRACT').output.csvGuid,'.csv?sv=2024-11-04&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-06-23T16:10:59Z&st=2025-06-23T08:10:59Z&spr=https&sig=YD8Ay7r0klM7XL4eWxa5xAqEZNTH3oP9LMV%2BU2RII4s%3D')",
+						"type": "Expression"
+					},
+					"body": {
+						"value": "@activity('Extract from sales orgs').output.Response",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"pMetaName": {
+				"type": "string",
+				"defaultValue": "OffPlatformDailyRealDataInEx"
+			},
+			"pCalendarYear": {
+				"type": "string",
+				"defaultValue": "2025"
+			},
+			"pSalesOrg": {
+				"type": "string",
+				"defaultValue": "FR01"
+			},
+			"pEnvironment": {
+				"type": "string",
+				"defaultValue": "bat"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-06-05T16:48:56Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
